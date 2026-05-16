@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURANG — Crafting Experiences Beyond Ordinary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#09090b;--deep:#121214;--surface:#18181b;--raised:#27272a;
+  --gold:#D4AF37;--gold-hi:#F3E5AB;--gold-lo:#AA8529;
+  --violet:#7A5CFF;--amber:#FFB800;
+  --white:#FAFAFA;--w60:rgba(250,250,250,.6);--w30:rgba(250,250,250,.3);--w12:rgba(250,250,250,.12);--w06:rgba(250,250,250,.06);
+  --border:rgba(212,175,55,.15);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-in-out:cubic-bezier(.76,0,.24,1);
+  --rad: 24px;
+  --rad-sm: 12px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--ink);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--gold-lo);border-radius:10px}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit;cursor:none}
+
+/* ── GRAIN ── */
+body::after{content:'';position:fixed;inset:0;z-index:9995;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  opacity:.7;mix-blend-mode:overlay}
+
+/* ── CURSOR ── */
+#cur{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:difference}
+#cur-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(212,175,55,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s var(--ease-out),height .4s var(--ease-out),opacity .3s,border-color .3s}
+.cur-grow #cur{width:64px;height:64px;background:rgba(212,175,55,.1)}
+.cur-grow #cur-ring{width:80px;height:80px;border-color:var(--gold);background:rgba(255,255,255,0.02);backdrop-filter:blur(2px)}
+
+/* ── PRELOADER ── */
+#preloader{position:fixed;inset:0;z-index:9990;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform 1.4s var(--ease-in-out)}
+#pre-logo{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,60px);letter-spacing:10px;color:var(--gold);margin-bottom:60px;opacity:0;transform:translateY(20px);transition:opacity 1s,transform 1s;font-style:italic}
+#pre-logo.show{opacity:1;transform:translateY(0)}
+#pre-wrap{width:min(300px,80vw)}
+#pre-count{font-family:'Cormorant Garamond',serif;font-size:clamp(60px,10vw,100px);color:var(--white);text-align:right;line-height:1;font-weight:300}
+#pre-bar-outer{height:1px;background:var(--w12);margin-top:20px}
+#pre-bar{height:1px;background:linear-gradient(90deg,var(--gold),var(--white));width:0%;transition:width .05s linear}
+#pre-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-lo);margin-top:24px;opacity:.7}
+
+/* ── NAVBAR ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:40px 64px;display:flex;align-items:center;justify-content:space-between;transition:padding .6s var(--ease-out),background .6s var(--ease-out),border-bottom .6s}
+nav.stuck{padding:20px 64px;background:rgba(9,9,11,.75);backdrop-filter:blur(24px);border-bottom:1px solid var(--w06)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:24px;letter-spacing:6px;color:var(--white);font-weight:500}
+.nav-links{display:flex;gap:48px;align-items:center}
+.nav-link{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--w60);position:relative;padding-bottom:6px;transition:color .4s}
+.nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width .5s var(--ease-out)}
+.nav-link:hover{color:var(--gold)}
+.nav-link:hover::after{width:100%}
+.btn-nav{border:1px solid var(--border);border-radius:var(--rad-sm);color:var(--white)!important;padding:12px 32px;font-size:11px!important;letter-spacing:2px;transition:background .4s,border-color .4s!important}
+.btn-nav:hover{background:rgba(212,175,55,.08)!important;border-color:var(--gold)}
+.btn-nav::after{display:none!important}
+
+/* ── HERO ── */
+#hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--ink);text-align:center}
+#three-hero{position:absolute;inset:0;width:100%;height:100%}
+.hero-inner{position:relative;z-index:2;padding:0 24px;max-width:1000px;display:flex;flex-direction:column;align-items:center}
+.hero-eyebrow{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:40px;display:flex;align-items:center;justify-content:center;gap:20px}
+.hero-eyebrow::before, .hero-eyebrow::after{content:'';display:block;width:50px;height:1px;background:var(--gold);opacity:.5}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(56px,8.5vw,110px);line-height:1.05;font-weight:400;letter-spacing:-1px}
+.hero-h1 .gold-line{color:var(--gold);font-style:italic;display:inline-block;padding-right:12px}
+.hero-sub{margin-top:40px;font-size:16px;line-height:1.9;color:var(--w60);max-width:600px;font-weight:300}
+.hero-btns{margin-top:60px;display:flex;gap:24px;justify-content:center}
+.btn-primary{display:inline-block;background:var(--gold);color:var(--ink);padding:20px 52px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500;border-radius:var(--rad-sm);transition:transform .5s var(--ease-out),box-shadow .5s,background .5s}
+.btn-primary:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(212,175,55,.2);background:var(--gold-hi)}
+.btn-ghost{display:inline-block;border:1px solid var(--w30);border-radius:var(--rad-sm);color:var(--white);padding:19px 44px;font-size:11px;letter-spacing:3px;text-transform:uppercase;transition:border-color .4s,color .4s,background .4s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.05)}
+.hero-scroll{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:20px}
+.hero-scroll-line{width:1px;height:60px;background:var(--w30);overflow:hidden;position:relative}
+.hero-scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--gold);animation:scrollpulse-v 2.4s infinite 1s}
+.hero-scroll-txt{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--w60)}
+@keyframes scrollpulse-v{to{top:200%}}
+
+/* ── LINE REVEAL ── */
+.rl{overflow:hidden;display:inline-block;vertical-align:bottom;padding-bottom:10px;margin-bottom:-10px;}
+.ri{display:inline-block;transform:translateY(110%) rotate(2deg);transform-origin:left top;transition:transform 1.2s var(--ease-out)}
+.in-view .ri{transform:translateY(0) rotate(0deg)}
+.ri-d1{transition-delay:.08s}.ri-d2{transition-delay:.16s}.ri-d3{transition-delay:.24s}.ri-d4{transition-delay:.32s}.ri-d5{transition-delay:.40s}
+/* fade reveal */
+.fade-up{opacity:0;transform:translateY(50px);filter:blur(12px);transition:opacity 1s var(--ease-out),transform 1s var(--ease-out),filter 1s var(--ease-out);will-change:transform,opacity,filter}
+.fade-up.in-view{opacity:1;transform:translateY(0);filter:blur(0)}
+.fd1{transition-delay:.1s}.fd2{transition-delay:.2s}.fd3{transition-delay:.3s}.fd4{transition-delay:.4s}.fd5{transition-delay:.5s}.fd6{transition-delay:.6s}
+
+/* ── MARQUEE ── */
+.marquee{overflow:hidden;padding:24px 0;border-top:1px solid var(--w06);border-bottom:1px solid var(--w06);background:var(--ink)}
+.marquee-track{display:flex;width:max-content;animation:marquee 35s linear infinite}
+.marquee-item{font-family:'Inter',sans-serif;font-weight:300;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-lo);padding:0 40px;}
+.marquee-sep{color:var(--w12);padding:0 12px;font-size:14px;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee:hover .marquee-track{animation-play-state:paused}
+
+/* ── STORY: HORIZONTAL SCROLL ── */
+#story{height:500vh;position:relative}
+.story-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--ink)}
+.story-track{display:flex;width:500vw;height:100%;will-change:transform;transition:transform .1s cubic-bezier(0.1,0.5,0.9,0.5)}
+.story-panel{width:100vw;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;padding:0 10vw}
+.story-panel::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:var(--w06)}
+.sp-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.sp-num-bg{font-family:'Playfair Display',serif;font-style:italic;font-size:35vw;color:rgba(255,255,255,.02);line-height:1;user-select:none;transform:translateY(-5%)}
+.sp-content{max-width:800px;position:relative;z-index:1;text-align:center}
+.sp-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:40px;display:inline-flex;align-items:center;gap:16px}
+.sp-label::before,.sp-label::after{content:'';display:block;width:30px;height:1px;background:var(--gold);opacity:.4}
+.sp-q{font-family:'Playfair Display',serif;font-size:clamp(36px,5.5vw,72px);font-weight:400;line-height:1.2;color:var(--white)}
+.sp-q em{font-style:italic;color:var(--gold);font-weight:300}
+.story-progress{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:10}
+.sp-dot{width:40px;height:1px;background:var(--w12);transition:background .5s,transform .5s}
+.sp-dot.active{background:var(--gold);transform:scaleY(2)}
+.story-scroll-hint{position:absolute;bottom:50px;right:64px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--w30);display:flex;align-items:center;gap:16px}
+.story-scroll-hint::after{content:'→';font-size:14px;font-family:'Cormorant Garamond',serif;font-style:italic}
+
+/* ── SERVICES ── */
+#services{padding:180px 64px;background:var(--deep)}
+.section-label{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:20px}
+.section-label::before{content:'';display:block;width:40px;height:1px;background:var(--gold);opacity:.5}
+.sv-title{font-family:'Playfair Display',serif;font-size:clamp(50px,7vw,90px);line-height:1;margin-bottom:100px;font-weight:400}
+.sv-title span{font-style:italic;color:var(--gold)}
+.sv-list{border-top:1px solid var(--w06)}
+.sv-item{border-bottom:1px solid var(--w06);display:grid;grid-template-columns:120px 1fr auto;align-items:center;padding:48px 0;gap:40px;cursor:none;transition:padding .5s var(--ease-out),background .5s}
+.sv-item:hover{padding-left:32px;padding-right:32px;background:rgba(255,255,255,.01)}
+.sv-n{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:56px;color:var(--w12);line-height:1;transition:color .5s,transform .5s}
+.sv-item:hover .sv-n{color:var(--gold);transform:translateX(10px)}
+.sv-info{}
+.sv-name{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,36px);font-weight:400;transition:transform .5s var(--ease-out)}
+.sv-item:hover .sv-name{transform:translateX(10px)}
+.sv-desc{font-size:14px;color:var(--w60);line-height:1.7;max-width:520px;margin-top:0;height:0;overflow:hidden;opacity:0;transition:height .5s var(--ease-out),margin .5s,opacity .5s}
+.sv-item:hover .sv-desc{height:50px;margin-top:16px;opacity:1}
+.sv-arrow{font-size:24px;font-family:'Cormorant Garamond',serif;color:var(--w30);transition:color .5s,transform .5s}
+.sv-item:hover .sv-arrow{color:var(--gold);transform:translateX(10px) scale(1.2)}
+
+/* ── THREE WAVE DIVIDER ── */
+#wave-section{position:relative;height:80vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--ink)}
+#three-wave{position:absolute;inset:0;width:100%;height:100%}
+.wave-overlay{position:relative;z-index:2;text-align:center;pointer-events:none}
+.wave-label{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:30px;opacity:.9}
+.wave-big{font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,90px);line-height:1.1;color:var(--white);font-weight:400}
+.wave-big span{font-style:italic;color:var(--gold)}
+
+/* ── EXPERIENCES ── */
+#experiences{background:var(--ink);padding:180px 64px}
+.exp-hdr{margin-bottom:120px}
+.exp-hdr-title{font-family:'Playfair Display',serif;font-size:clamp(50px,7vw,90px);line-height:1;font-weight:400}
+.exp-hdr-title span{font-style:italic;color:var(--gold)}
+.exp-grid{display:flex;flex-direction:column;gap:160px}
+.exp-block{position:relative;display:flex;align-items:center;min-height:650px}
+.exp-block:nth-child(even){flex-direction:row-reverse}
+.exp-vis{width:60%;height:650px;border-radius:var(--rad);overflow:hidden;transform:translateZ(0);position:relative}
+.exp-vis-inner{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.exp-block:hover .exp-vis-inner{transform:scale(1.04)}
+.exp-vis-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(9,9,11,.4),rgba(212,175,55,.1))}
+.exp-tag{position:absolute;top:40px;left:40px;background:rgba(212,175,55,.15);backdrop-filter:blur(12px);border:1px solid rgba(212,175,55,.3);border-radius:30px;color:var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:10px 24px;font-weight:500}
+.exp-body{width:50%;position:relative;z-index:10;background:rgba(24,24,27,.6);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);padding:80px;border-radius:var(--rad);border:1px solid var(--w06);box-shadow:0 40px 80px rgba(0,0,0,.5);transition:transform .8s var(--ease-out),background .8s,border-color .8s}
+.exp-block:nth-child(odd) .exp-body{margin-left:-10%}
+.exp-block:nth-child(even) .exp-body{margin-right:-10%}
+.exp-block:hover .exp-body{background:rgba(24,24,27,.8);border-color:var(--border)}
+.exp-cat{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+.exp-t{font-family:'Playfair Display',serif;font-size:clamp(32px,3.5vw,48px);font-weight:400;line-height:1.15;margin-bottom:24px}
+.exp-d{font-size:15px;color:var(--w60);line-height:1.8;margin-bottom:48px}
+.exp-lnk{display:inline-flex;align-items:center;gap:16px;color:var(--white);font-size:11px;letter-spacing:3px;text-transform:uppercase;position:relative;transition:color .4s}
+.exp-lnk::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:1px;background:var(--gold);transition:width .5s var(--ease-out)}
+.exp-lnk:hover{color:var(--gold)}
+.exp-lnk:hover::after{width:100%}
+.exp-lnk-arr{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--gold);transition:transform .5s var(--ease-out)}
+.exp-lnk:hover .exp-lnk-arr{transform:translateX(8px)}
+
+/* ── TIMELINE ── */
+#timeline{padding:180px 64px;background:var(--deep);overflow:hidden}
+.tl-title{font-family:'Playfair Display',serif;font-size:clamp(50px,7vw,90px);line-height:1;margin-bottom:120px;font-weight:400;text-align:center}
+.tl-title span{font-style:italic;color:var(--gold)}
+.tl-track{position:relative;max-width:1100px;margin:0 auto}
+.tl-rail{position:absolute;top:0;left:50%;bottom:0;width:1px;background:var(--w06);transform:translateX(-50%)}
+.tl-prog{position:absolute;top:0;left:50%;width:1px;height:0;background:var(--gold);transition:height .15s ease-out;transform:translateX(-50%)}
+.tl-steps{display:flex;flex-direction:column;gap:120px}
+.tl-step{text-align:left;position:relative;display:flex;align-items:center;width:100%}
+.tl-step:nth-child(even){flex-direction:row-reverse}
+.tl-content{width:42%;padding:40px;background:rgba(24,24,27,.3);border:1px solid var(--w06);border-radius:var(--rad-sm);backdrop-filter:blur(10px);transition:border-color .6s,background .6s}
+.tl-step.lit .tl-content{border-color:var(--border);background:rgba(24,24,27,.6)}
+.tl-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--surface);border:1px solid var(--w12);transition:background .6s,border-color .6s,box-shadow .6s,transform .6s;z-index:2}
+.tl-step.lit .tl-dot{background:var(--ink);border-color:var(--gold);box-shadow:0 0 24px rgba(212,175,55,.6);transform:translate(-50%,-50%) scale(1.3)}
+.tl-slabel{font-size:clamp(16px,2vw,22px);color:var(--w30);line-height:1.4;transition:color .6s;text-transform:uppercase;letter-spacing:2px;font-weight:400;font-family:'Playfair Display',serif}
+.tl-step.lit .tl-slabel{color:var(--white)}
+.tl-step:nth-child(odd) .tl-content{text-align:right}
+
+/* ── GALLERY ── */
+#gallery{padding:180px 64px;background:var(--ink)}
+.gal-title{font-family:'Playfair Display',serif;font-size:clamp(50px,7vw,90px);line-height:1;margin-bottom:80px;font-weight:400}
+.gal-title span{font-style:italic;color:var(--gold)}
+.masonry{columns:4;gap:24px}
+.mitem{break-inside:avoid;margin-bottom:24px;position:relative;overflow:hidden;display:block;cursor:none;border-radius:var(--rad-sm)}
+.mitem img{display:block;width:100%;transition:transform .8s var(--ease-out);object-fit:cover}
+.mitem:hover img{transform:scale(1.05)}
+.m1 img{height:380px}
+.m2 img{height:240px}
+.m3 img{height:320px}
+.m4 img{height:260px}
+.m5 img{height:340px}
+.m6 img{height:200px}
+.m7 img{height:280px}
+.m8 img{height:260px}
+.moverlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(9,9,11,.9), transparent 60%);opacity:0;transition:opacity .6s;display:flex;align-items:flex-end;padding:32px}
+.mitem:hover .moverlay{opacity:1}
+.mlabel{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--white);transform:translateY(15px);transition:transform .6s var(--ease-out)}
+.mitem:hover .mlabel{transform:translateY(0)}
+.mgold-line{position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width .7s var(--ease-out)}
+.mitem:hover .mgold-line{width:100%}
+
+/* ── WHY / STATS ── */
+#why{padding:180px 64px;background:var(--deep);text-align:center}
+.why-title{font-family:'Playfair Display',serif;font-size:clamp(50px,8vw,100px);line-height:1.05;margin-bottom:24px;font-weight:400}
+.why-title span{font-style:italic;color:var(--gold)}
+.why-sub{font-family:'Cormorant Garamond',serif;font-size:24px;font-style:italic;color:var(--w60);max-width:600px;margin:0 auto 100px;line-height:1.5}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-bottom:120px}
+.wcard{padding:64px 48px;background:linear-gradient(160deg, rgba(24,24,27,.6), rgba(9,9,11,.3));border:1px solid var(--w06);border-radius:var(--rad);text-align:left;position:relative;overflow:hidden;transition:transform .6s var(--ease-out),box-shadow .6s,border-color .6s}
+.wcard:hover{transform:translateY(-10px);box-shadow:0 30px 60px rgba(0,0,0,.4);border-color:var(--border)}
+.wcard-ico{width:64px;height:64px;border:1px solid var(--w12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:32px;transition:border-color .6s,background .6s}
+.wcard:hover .wcard-ico{border-color:var(--gold);background:rgba(212,175,55,.05)}
+.wcard-t{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:16px}
+.wcard-d{font-size:14px;color:var(--w60);line-height:1.8}
+.wcard::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at top right, rgba(212,175,55,.05), transparent 70%);opacity:0;transition:opacity .6s}
+.wcard:hover::after{opacity:1}
+.stats-row{display:flex;justify-content:center;gap:120px;padding:80px 0;border-top:1px solid var(--w06);border-bottom:1px solid var(--w06)}
+.stat{text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:80px;line-height:1;color:var(--gold);font-style:italic;font-weight:400}
+.stat-l{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--w60);margin-top:16px}
+
+/* ── TESTIMONIALS ── */
+#testi{padding:180px 64px;background:var(--ink)}
+.testi-title{font-family:'Playfair Display',serif;font-size:clamp(50px,7vw,90px);line-height:1;margin-bottom:100px;font-weight:400}
+.testi-title span{font-style:italic;color:var(--gold)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.tc{padding:64px 48px;background:rgba(24,24,27,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--w06);border-radius:var(--rad);transition:background .6s,border-color .6s,transform .6s;position:relative;overflow:hidden}
+.tc:hover{background:rgba(24,24,27,.7);border-color:var(--border);transform:translateY(-5px)}
+.tc-qm{font-family:'Playfair Display',serif;font-size:100px;color:rgba(212,175,55,.08);line-height:0.5;margin-bottom:30px;font-style:italic}
+.tc-stars{color:var(--gold);font-size:14px;margin-bottom:20px;letter-spacing:4px}
+.tc-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;line-height:1.6;color:var(--white);margin-bottom:40px}
+.tc-author{display:flex;align-items:center;gap:20px}
+.tc-av{width:50px;height:50px;border-radius:50%;background:var(--deep);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-family:'Playfair Display',serif;color:var(--gold)}
+.tc-name{font-size:14px;font-weight:500;font-family:'Inter',sans-serif}
+.tc-role{font-size:12px;color:var(--w30);letter-spacing:.5px;margin-top:4px}
+
+/* ── CTA ── */
+#cta{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;background:var(--deep)}
+#three-cta{position:absolute;inset:0;width:100%;height:100%}
+.cta-inner{position:relative;z-index:2;background:rgba(9,9,11,.3);padding:100px;border-radius:var(--rad);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--w06)}
+.cta-label{font-size:11px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:40px}
+.cta-title{font-family:'Playfair Display',serif;font-size:clamp(50px,9vw,120px);line-height:1;margin-bottom:60px;font-weight:400}
+.cta-title span.i{font-style:italic;color:var(--gold)}
+.btn-cta{display:inline-block;background:var(--white);color:var(--ink);padding:22px 64px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:500;border-radius:var(--rad-sm);transition:transform .5s,box-shadow .5s,background .5s}
+.btn-cta:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(250,250,250,.15);background:var(--gold);color:var(--ink)}
+
+/* ── FOOTER ── */
+footer{padding:120px 64px 60px;background:var(--ink);border-top:1px solid var(--w06)}
+.ft-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1.5fr;gap:80px;margin-bottom:100px}
+.ft-logo{font-family:'Playfair Display',serif;font-size:36px;letter-spacing:4px;color:var(--white);display:block;margin-bottom:24px}
+.ft-tag{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--w60);line-height:1.6;max-width:300px}
+.ft-col-t{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;font-weight:500}
+.ft-links{list-style:none}
+.ft-links li{margin-bottom:16px}
+.ft-links a{font-size:14px;color:var(--w60);transition:color .4s}
+.ft-links a:hover{color:var(--gold)}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:40px;border-top:1px solid var(--w06)}
+.ft-copy{font-size:12px;color:var(--w30)}
+.ft-socials{display:flex;gap:16px}
+.ft-soc{width:44px;height:44px;border:1px solid var(--w12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--w60);transition:border-color .4s,color .4s,background .4s}
+.ft-soc:hover{border-color:var(--gold);color:var(--ink);background:var(--gold)}
+
+/* ── DIVIDER ── */
+.gold-rule{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3) 50%,transparent);opacity:.5}
+
+/* ── MAGNETIC WRAPPER ── */
+.mag{display:inline-block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  nav{padding:24px}
+  nav.stuck{padding:16px 24px}
+  .nav-links{display:none}
+  #hero .hero-inner{padding:0 24px}
+  .hero-scroll{left:24px}
+  #story{height:400vh}
+  .sp-q{font-size:36px}
+  #services,#experiences,#timeline,#gallery,#why,#testi,footer{padding-left:24px;padding-right:24px;padding-top:100px;padding-bottom:100px;}
+  .sv-item{grid-template-columns:80px 1fr auto}
+  .exp-block{flex-direction:column;min-height:auto;gap:40px}
+  .exp-vis{width:100%;position:relative;height:400px}
+  .exp-body{width:100%;transform:none!important;margin:0!important;padding:40px}
+  .tl-steps{grid-template-columns:repeat(4,1fr);row-gap:60px}
+  .masonry{columns:2}
+  .why-grid,.testi-grid{grid-template-columns:1fr}
+  .stats-row{gap:40px;flex-wrap:wrap}
+  .ft-grid{grid-template-columns:1fr;gap:60px}
+  .ft-bottom{flex-direction:column;gap:24px;text-align:center}
+  .cta-inner{padding:40px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div id="pre-logo">AURANG</div>
+  <div id="pre-wrap">
+    <div id="pre-count">0</div>
+    <div id="pre-bar-outer"><div id="pre-bar"></div></div>
+    <div id="pre-label">Crafting Experience</div>
+  </div>
+</div>
+
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <span class="nav-logo">AURANG</span>
+  <div class="nav-links">
+    <a href="#story" class="nav-link">Story</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#experiences" class="nav-link">Experiences</a>
+    <a href="#gallery" class="nav-link">Gallery</a>
+    <a href="#cta" class="nav-link btn-nav mag">Get In Touch</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section id="hero">
+  <canvas id="three-hero"></canvas>
+  <div class="hero-inner">
+    <div class="hero-eyebrow fade-up">AURANG Hospitality Services</div>
+    <h1 class="hero-h1">
+      <span class="rl"><span class="ri">We Don't</span></span><br>
+      <span class="rl"><span class="ri ri-d1 gold-line">Just Organize</span></span>
+      <span class="rl"><span class="ri ri-d2">Events.</span></span>
+    </h1>
+    <p class="hero-sub fade-up fd3">Luxury event management, live performances, cultural exhibitions &amp; musical productions — crafted with cinematic precision.</p>
+    <div class="hero-btns fade-up fd4">
+      <a href="#experiences" class="btn-primary mag">Explore Experiences</a>
+      <a href="#gallery" class="btn-ghost mag">View Showcase</a>
+    </div>
+  </div>
+  <div class="hero-scroll fade-up fd5">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-txt">Scroll to explore</span>
+  </div>
+</section>
+
+<!-- ═══════════════════ MARQUEE ═══════════════════ -->
+<div class="marquee">
+  <div class="marquee-track" id="mtrack">
+    <span class="marquee-item">Events Organizing</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Live Entertainment</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Musical Festivals</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Cultural Exhibitions</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Performing Arts</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Luxury Production</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Premium Hospitality</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Events Organizing</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Live Entertainment</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Musical Festivals</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Cultural Exhibitions</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Performing Arts</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Luxury Production</span><span class="marquee-sep">✧</span>
+    <span class="marquee-item">Premium Hospitality</span><span class="marquee-sep">✧</span>
+  </div>
+</div>
+
+<!-- ═══════════════════ STORY (HORIZONTAL) ═══════════════════ -->
+<section id="story">
+  <div class="story-sticky">
+    <div class="story-track" id="story-track">
+
+      <div class="story-panel">
+        <div class="sp-bg"><div class="sp-num-bg">01</div></div>
+        <div class="sp-content">
+          <div class="sp-label">Our Belief</div>
+          <div class="sp-q">"Every celebration deserves a <em>story</em> worth telling."</div>
+        </div>
+      </div>
+
+      <div class="story-panel">
+        <div class="sp-bg"><div class="sp-num-bg">02</div></div>
+        <div class="sp-content">
+          <div class="sp-label">Our Passion</div>
+          <div class="sp-q">"Every performance deserves <em>emotion</em> that moves people."</div>
+        </div>
+      </div>
+
+      <div class="story-panel">
+        <div class="sp-bg"><div class="sp-num-bg">03</div></div>
+        <div class="sp-content">
+          <div class="sp-label">Our Standard</div>
+          <div class="sp-q">"Every event deserves <em>extraordinary</em> production."</div>
+        </div>
+      </div>
+
+      <div class="story-panel">
+        <div class="sp-bg"><div class="sp-num-bg">04</div></div>
+        <div class="sp-content">
+          <div class="sp-label">Our Promise</div>
+          <div class="sp-q">"Every guest deserves to feel <em>something</em> unforgettable."</div>
+        </div>
+      </div>
+
+      <div class="story-panel">
+        <div class="sp-bg"><div class="sp-num-bg">05</div></div>
+        <div class="sp-content">
+          <div class="sp-label">Our Name</div>
+          <div class="sp-q">"That's where <em>AURANG</em> begins."</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="story-progress" id="story-dots">
+      <div class="sp-dot active"></div>
+      <div class="sp-dot"></div>
+      <div class="sp-dot"></div>
+      <div class="sp-dot"></div>
+      <div class="sp-dot"></div>
+    </div>
+    <div class="story-scroll-hint">Drag to explore</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SERVICES ═══════════════════ -->
+<section id="services">
+  <div class="section-label">What We Do</div>
+  <h2 class="sv-title rl"><span class="ri">Our <span>Services</span></span></h2>
+  <div class="sv-list">
+    <div class="sv-item">
+      <div class="sv-n">01</div>
+      <div class="sv-info">
+        <div class="sv-name">Events Organizing &amp; Managing</div>
+        <div class="sv-desc">Premium end-to-end event planning and execution for corporate, luxury &amp; cultural events.</div>
+      </div>
+      <div class="sv-arrow">↗</div>
+    </div>
+    <div class="sv-item">
+      <div class="sv-n">02</div>
+      <div class="sv-info">
+        <div class="sv-name">Parties &amp; Entertainment Services</div>
+        <div class="sv-desc">Curated entertainment experiences with premium production quality that exceeds expectations.</div>
+      </div>
+      <div class="sv-arrow">↗</div>
+    </div>
+    <div class="sv-item">
+      <div class="sv-n">03</div>
+      <div class="sv-info">
+        <div class="sv-name">Performing Arts &amp; Musical Festivals</div>
+        <div class="sv-desc">Large-scale cultural programs and festival production management — artistic vision at scale.</div>
+      </div>
+      <div class="sv-arrow">↗</div>
+    </div>
+    <div class="sv-item">
+      <div class="sv-n">04</div>
+      <div class="sv-info">
+        <div class="sv-name">Exhibition Organizing</div>
+        <div class="sv-desc">Immersive exhibitions and experiential showcases designed for deep engagement and lasting impression.</div>
+      </div>
+      <div class="sv-arrow">↗</div>
+    </div>
+    <div class="sv-item">
+      <div class="sv-n">05</div>
+      <div class="sv-info">
+        <div class="sv-name">Musical Band &amp; Live Performances</div>
+        <div class="sv-desc">Live musical performances and energetic entertainment experiences that electrify every audience.</div>
+      </div>
+      <div class="sv-arrow">↗</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ THREE WAVE DIVIDER ═══════════════════ -->
+<div id="wave-section">
+  <canvas id="three-wave"></canvas>
+  <div class="wave-overlay">
+    <div class="wave-label">Our Signature</div>
+    <div class="wave-big">From Intimate<br><span>to Extraordinary</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ EXPERIENCES ═══════════════════ -->
+<section id="experiences">
+  <div class="exp-hdr">
+    <div class="section-label">Featured Work</div>
+    <h2 class="exp-hdr-title">Featured<br><span>Experiences</span></h2>
+  </div>
+
+  <div class="exp-grid">
+    <div class="exp-block fade-up">
+      <div class="exp-vis">
+        <img class="exp-vis-inner" src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200&q=80" alt="Music Festival" loading="lazy">
+        <div class="exp-vis-overlay"></div>
+        <div class="exp-tag">Music Festival</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-cat">Performing Arts</div>
+        <h3 class="exp-t">Midnight Symphony</h3>
+        <p class="exp-d">An orchestral masterpiece under the stars — where classical music met contemporary production in a breathtaking outdoor amphitheatre experience attended by 5,000+ guests across two nights.</p>
+        <span class="exp-lnk mag">Explore This Experience <span class="exp-lnk-arr">→</span></span>
+      </div>
+    </div>
+
+    <div class="exp-block fade-up">
+      <div class="exp-vis">
+        <img class="exp-vis-inner" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80" alt="Cultural Festival" loading="lazy">
+        <div class="exp-vis-overlay" style="background:linear-gradient(135deg,rgba(9,9,11,.4),rgba(212,175,55,.15))"></div>
+        <div class="exp-tag">Cultural Festival</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-cat">Cultural Events</div>
+        <h3 class="exp-t">Aurora Cultural Fest</h3>
+        <p class="exp-d">A multi-day celebration of art, tradition and contemporary culture spanning three city venues — bringing together artists, performers and over 12,000 visitors in an unforgettable shared experience.</p>
+        <span class="exp-lnk mag">Explore This Experience <span class="exp-lnk-arr">→</span></span>
+      </div>
+    </div>
+
+    <div class="exp-block fade-up">
+      <div class="exp-vis">
+        <img class="exp-vis-inner" src="https://images.unsplash.com/photo-1459749411177-042180ce6742?w=1200&q=80" alt="Electronic Music" loading="lazy">
+        <div class="exp-vis-overlay" style="background:linear-gradient(135deg,rgba(9,9,11,.4),rgba(122,92,255,.15))"></div>
+        <div class="exp-tag">Electronic Music</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-cat">Festival Production</div>
+        <h3 class="exp-t">Neon Pulse Festival</h3>
+        <p class="exp-d">The city's most talked-about electronic music experience — engineered with state-of-the-art stage lighting, audio production, and crowd management for 8,000 attendees across a single breathless night.</p>
+        <span class="exp-lnk mag">Explore This Experience <span class="exp-lnk-arr">→</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TIMELINE ═══════════════════ -->
+<section id="timeline">
+  <div class="section-label fade-up">Our Process</div>
+  <h2 class="tl-title fade-up fd1">How We Build<br><span>Magic</span></h2>
+  <div class="tl-track">
+    <div class="tl-rail"></div>
+    <div class="tl-prog" id="tl-prog"></div>
+    <div class="tl-steps">
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Concept Development</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Planning & Production</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Artist Coordination</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Venue Design</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Event Execution</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Audience Engagement</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Live Performance</div></div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-content"><div class="tl-slabel">Post-Event Experience</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-rule"></div>
+
+<!-- ═══════════════════ GALLERY ═══════════════════ -->
+<section id="gallery">
+  <div class="section-label fade-up">Visual Showcase</div>
+  <h2 class="gal-title fade-up fd1">The <span>Gallery</span></h2>
+  <div class="masonry">
+    <div class="mitem m1"><img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Midnight Symphony</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m2"><img src="https://images.unsplash.com/photo-1514525253361-bee8718a300c?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Aurora Cultural Fest</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m3"><img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Neon Pulse Stage</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m4"><img src="https://images.unsplash.com/photo-1429962714451-bb934ecbb4ec?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Elite Corporate Gala</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m5"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Luxury Wedding</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m6"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Cultural Exhibition</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m7"><img src="https://images.unsplash.com/photo-1459749411177-042180ce6742?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Musical Ensemble</div></div><div class="mgold-line"></div></div>
+    <div class="mitem m8"><img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80" loading="lazy"><div class="moverlay"><div class="mlabel">Performing Arts Night</div></div><div class="mgold-line"></div></div>
+  </div>
+</section>
+
+<div class="gold-rule"></div>
+
+<!-- ═══════════════════ WHY ═══════════════════ -->
+<section id="why">
+  <div class="section-label" style="justify-content:center">Why AURANG</div>
+  <h2 class="why-title fade-up">Built For<br><span>Memorable</span><br>Experiences.</h2>
+  <p class="why-sub fade-up fd1">From intimate celebrations to multi-city productions — we bring your vision to life with uncompromising quality.</p>
+  <div class="why-grid">
+    <div class="wcard fade-up fd1"><div class="wcard-ico">✧</div><div class="wcard-t">Premium Hospitality</div><div class="wcard-d">Every detail handled with white-glove precision. Our team sets the gold standard for event hospitality in the region.</div></div>
+    <div class="wcard fade-up fd2"><div class="wcard-ico">✧</div><div class="wcard-t">Creative Direction</div><div class="wcard-d">We approach every event as a cinematic production — with narrative, visual design, and emotional storytelling at its core.</div></div>
+    <div class="wcard fade-up fd3"><div class="wcard-ico">✧</div><div class="wcard-t">Technical Excellence</div><div class="wcard-d">State-of-the-art AV, lighting rigs, staging &amp; technical infrastructure that delivers world-class production values.</div></div>
+    <div class="wcard fade-up fd4"><div class="wcard-ico">✧</div><div class="wcard-t">Live Entertainment</div><div class="wcard-d">Our curated roster of artists, performers and musicians ensures every stage moment electrifies the audience.</div></div>
+    <div class="wcard fade-up fd5"><div class="wcard-ico">✧</div><div class="wcard-t">End-to-End Delivery</div><div class="wcard-d">One dedicated team handles everything — from concept to curtain call — so you can simply be present and enjoy.</div></div>
+    <div class="wcard fade-up fd6"><div class="wcard-ico">✧</div><div class="wcard-t">High-Impact Visuals</div><div class="wcard-d">We design moments that photograph beautifully, feel profound in person, and stay in memory long after the event ends.</div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n" data-target="100">0</div><div class="stat-l">Events Produced</div></div>
+    <div class="stat"><div class="stat-n" data-target="50">0</div><div class="stat-l">Live Performances</div></div>
+    <div class="stat"><div class="stat-n" data-target="8">0</div><div class="stat-l">Cities</div></div>
+    <div class="stat"><div class="stat-n" data-target="25000">0</div><div class="stat-l">Guests Delighted</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TESTIMONIALS ═══════════════════ -->
+<section id="testi">
+  <div class="section-label fade-up">Client Words</div>
+  <h2 class="testi-title fade-up fd1">What They <span>Say</span></h2>
+  <div class="testi-grid">
+    <div class="tc fade-up fd1">
+      <div class="tc-qm">"</div>
+      <p class="tc-text">AURANG transformed our annual gala into something we are still talking about months later. The production quality was genuinely world-class.</p>
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-author"><div class="tc-av">AR</div><div><div class="tc-name">Arjun Raghavan</div><div class="tc-role">CEO, Nexus Capital Group</div></div></div>
+    </div>
+    <div class="tc fade-up fd2">
+      <div class="tc-qm">"</div>
+      <p class="tc-text">The Aurora Cultural Fest they produced was unlike anything the city had seen. Every element felt intentional, luxurious, and alive with energy.</p>
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-author"><div class="tc-av">PM</div><div><div class="tc-name">Priya Menon</div><div class="tc-role">Director, Kerala Arts Council</div></div></div>
+    </div>
+    <div class="tc fade-up fd3">
+      <div class="tc-qm">"</div>
+      <p class="tc-text">We trusted AURANG with our flagship product launch event. What they delivered exceeded every expectation — our guests were completely blown away.</p>
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-author"><div class="tc-av">SK</div><div><div class="tc-name">Sahil Khan</div><div class="tc-role">CMO, Prestige Brands</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA ═══════════════════ -->
+<section id="cta">
+  <canvas id="three-cta"></canvas>
+  <div class="cta-inner">
+    <div class="cta-label">Begin Your Journey</div>
+    <h2 class="cta-title">
+      <span class="rl"><span class="ri">Let's Create</span></span><br>
+      <span class="rl"><span class="ri ri-d1"><span class="i">Something</span></span></span>
+      <span class="rl"><span class="ri ri-d2">Extraordinary.</span></span>
+    </h2>
+    <a href="mailto:hello@auranghospitality.com" class="btn-cta mag">Start Your Experience</a>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="ft-grid">
+    <div>
+      <span class="ft-logo">AURANG</span>
+      <p class="ft-tag">"Your audience deserves more than an event. Give them an experience."</p>
+    </div>
+    <div>
+      <div class="ft-col-t">Navigate</div>
+      <ul class="ft-links">
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#experiences">Experiences</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-t">Services</div>
+      <ul class="ft-links">
+        <li><a href="#">Event Management</a></li>
+        <li><a href="#">Live Entertainment</a></li>
+        <li><a href="#">Music Festivals</a></li>
+        <li><a href="#">Exhibitions</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-t">Contact</div>
+      <ul class="ft-links">
+        <li><a href="mailto:hello@auranghospitality.com">hello@auranghospitality.com</a></li>
+        <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+        <li><a href="#">Kerala, India</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-copy">© 2026 AURANG Hospitality Services. All rights reserved.</div>
+    <div class="ft-socials">
+      <a href="#" class="ft-soc">in</a>
+      <a href="#" class="ft-soc">ig</a>
+      <a href="#" class="ft-soc">fb</a>
+      <a href="#" class="ft-soc">yt</a>
+    </div>
+  </div>
+</footer>
+
+<!-- THREE.JS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ════════════════════════════════════════════
+//  CURSOR
+// ════════════════════════════════════════════
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let cx = 0, cy = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
+(function moveCursor() {
+  cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+  rx += (cx - rx) * 0.12; ry += (cy - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(moveCursor);
+})();
+document.querySelectorAll('a,button,.sv-item,.mitem,.tc,.wcard,.exp-block').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cur-grow'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cur-grow'));
+});
+
+// ════════════════════════════════════════════
+//  PRELOADER
+// ════════════════════════════════════════════
+const preLogo = document.getElementById('pre-logo');
+const preCount = document.getElementById('pre-count');
+const preBar = document.getElementById('pre-bar');
+setTimeout(() => preLogo.classList.add('show'), 200);
+let pct = 0;
+const preInterval = setInterval(() => {
+  pct += Math.random() * 2.8 + 0.5;
+  if (pct >= 100) { pct = 100; clearInterval(preInterval); showSite(); }
+  preCount.textContent = Math.floor(pct);
+  preBar.style.width = pct + '%';
+}, 45);
+function showSite() {
+  setTimeout(() => {
+    const pre = document.getElementById('preloader');
+    pre.style.transition = 'transform 1.4s cubic-bezier(.76,0,.24,1)';
+    pre.style.transform = 'translateY(-100%)';
+    setTimeout(revealHero, 600);
+  }, 300);
+}
+
+// ════════════════════════════════════════════
+//  HERO REVEAL
+// ════════════════════════════════════════════
+function revealHero() {
+  document.querySelectorAll('#hero .rl .ri').forEach(el => {
+    el.style.transform = 'translateY(0) rotate(0deg)';
+  });
+  document.querySelectorAll('#hero .fade-up').forEach(el => {
+    el.classList.add('in-view');
+  });
+}
+
+// ════════════════════════════════════════════
+//  NAVBAR
+// ════════════════════════════════════════════
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('stuck', window.scrollY > 80); });
+
+// ════════════════════════════════════════════
+//  THREE.JS — SCENE 1: HERO ORB
+// ════════════════════════════════════════════
+(function initHeroScene() {
+  const canvas = document.getElementById('three-hero');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  renderer.setSize(W, H);
+  const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
+  camera.position.set(0, 0, 7);
+
+  // Particle field (background)
+  const pGeo = new THREE.BufferGeometry();
+  const pCount = 600;
+  const pPos = new Float32Array(pCount * 3);
+  for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 22;
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xD4AF37, size: 0.025, transparent: true, opacity: 0.4 })));
+
+  // Metallic orb
+  const orbGeo = new THREE.IcosahedronGeometry(2, 6);
+  const orbMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, metalness: 0.9, roughness: 0.15 });
+  const orb = new THREE.Mesh(orbGeo, orbMat);
+  orb.position.set(2.5, -0.1, 0);
+  scene.add(orb);
+
+  // Wireframe cage (outer shell)
+  const cageGeo = new THREE.IcosahedronGeometry(2.15, 2);
+  const cage = new THREE.Mesh(cageGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0xD4AF37, transparent: true, opacity: 0.15 }));
+  cage.position.copy(orb.position);
+  scene.add(cage);
+
+  // Slow outer cage (different frequency)
+  const cageGeo2 = new THREE.IcosahedronGeometry(2.4, 1);
+  const cage2 = new THREE.Mesh(cageGeo2, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x7A5CFF, transparent: true, opacity: 0.05 }));
+  cage2.position.copy(orb.position);
+  scene.add(cage2);
+
+  // Ring around orb
+  const ringGeo = new THREE.TorusGeometry(3.2, 0.005, 8, 120);
+  const ringMesh = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.2 }));
+  ringMesh.position.copy(orb.position);
+  ringMesh.rotation.x = Math.PI / 2.5;
+  scene.add(ringMesh);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0x222222, 1));
+  const goldLight = new THREE.PointLight(0xD4AF37, 5, 15);
+  goldLight.position.set(4, 3, 3);
+  scene.add(goldLight);
+  const violetLight = new THREE.PointLight(0x7A5CFF, 3, 15);
+  violetLight.position.set(-3, -2, 4);
+  scene.add(violetLight);
+  const rimLight = new THREE.DirectionalLight(0xFFFFFF, 0.4);
+  rimLight.position.set(-5, 5, -3);
+  scene.add(rimLight);
+
+  // Mouse
+  let mxN = 0, myN = 0;
+  document.addEventListener('mousemove', e => {
+    mxN = (e.clientX / window.innerWidth - 0.5) * 2;
+    myN = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  function resize() {
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    renderer.setSize(W, H);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.006;
+
+    // Orb breathing + rotation
+    const breathe = 1 + Math.sin(t * 1.2) * 0.02;
+    orb.scale.set(breathe, breathe, breathe);
+    orb.rotation.y += 0.003;
+    orb.rotation.x += (myN * 0.4 - orb.rotation.x) * 0.03;
+
+    // Cage rotates opposite / different speed
+    cage.rotation.y -= 0.002;
+    cage.rotation.x -= 0.001;
+    cage.scale.set(breathe, breathe, breathe);
+    cage2.rotation.y += 0.001;
+    cage2.rotation.z -= 0.001;
+
+    // Ring
+    ringMesh.rotation.z += 0.0015;
+
+    // Orbit lights
+    goldLight.position.x = orb.position.x + Math.sin(t * 0.7) * 4;
+    goldLight.position.y = Math.cos(t * 0.5) * 3;
+    violetLight.position.x = orb.position.x + Math.cos(t * 0.6) * 4;
+    violetLight.position.z = Math.sin(t * 0.4) * 5;
+
+    // Camera gentle sway following mouse
+    camera.position.x += (mxN * 0.6 - camera.position.x) * 0.02;
+    camera.position.y += (-myN * 0.4 - camera.position.y) * 0.02;
+    camera.lookAt(orb.position);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ════════════════════════════════════════════
+//  THREE.JS — SCENE 2: WAVE DIVIDER
+// ════════════════════════════════════════════
+(function initWaveScene() {
+  const canvas = document.getElementById('three-wave');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  function getSize() { return { W: canvas.offsetWidth, H: canvas.offsetHeight }; }
+  let { W, H } = getSize();
+  renderer.setSize(W, H);
+  const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
+  camera.position.set(0, 5, 8);
+  camera.lookAt(0, 0, 0);
+
+  // Gold wireframe wave
+  const wGeo = new THREE.PlaneGeometry(22, 14, 90, 55);
+  wGeo.rotateX(-Math.PI / 2);
+  const origPos = wGeo.attributes.position.array.slice();
+  const wMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xD4AF37, transparent: true, opacity: 0.15 });
+  const wave = new THREE.Mesh(wGeo, wMat);
+  scene.add(wave);
+
+  // Second wave layer (violet)
+  const wGeo2 = new THREE.PlaneGeometry(22, 14, 45, 28);
+  wGeo2.rotateX(-Math.PI / 2);
+  const origPos2 = wGeo2.attributes.position.array.slice();
+  const wave2 = new THREE.Mesh(wGeo2, new THREE.MeshBasicMaterial({ wireframe: true, color: 0x7A5CFF, transparent: true, opacity: 0.06 }));
+  wave2.position.y = -0.05;
+  scene.add(wave2);
+
+  // Ambient glow
+  scene.add(new THREE.AmbientLight(0xD4AF37, 0.2));
+
+  window.addEventListener('resize', () => {
+    const { W, H } = getSize();
+    renderer.setSize(W, H);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  });
+
+  let scrollProgress = 0;
+  window.addEventListener('scroll', () => {
+    const sec = document.getElementById('wave-section');
+    const rect = sec.getBoundingClientRect();
+    scrollProgress = Math.max(0, Math.min(1, 1 - (rect.top + rect.height) / (window.innerHeight + rect.height)));
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.008;
+    const intensity = 0.3 + scrollProgress * 0.4;
+
+    // Displace wave vertices
+    const pos = wGeo.attributes.position.array;
+    for (let i = 0; i < pos.length; i += 3) {
+      const x = origPos[i], z = origPos[i + 2];
+      pos[i + 1] = Math.sin(x * 0.4 + t * 1.2) * intensity
+                 + Math.sin(z * 0.5 + t * 0.9) * intensity * 0.6
+                 + Math.sin((x + z) * 0.2 + t * 0.7) * intensity * 0.4;
+    }
+    wGeo.attributes.position.needsUpdate = true;
+
+    const pos2 = wGeo2.attributes.position.array;
+    for (let i = 0; i < pos2.length; i += 3) {
+      const x = origPos2[i], z = origPos2[i + 2];
+      pos2[i + 1] = Math.sin(x * 0.3 + t * 0.8) * intensity * 0.7
+                  + Math.sin(z * 0.4 + t * 0.7) * intensity * 0.4;
+    }
+    wGeo2.attributes.position.needsUpdate = true;
+
+    // Camera gentle float
+    camera.position.y = 5 + Math.sin(t * 0.2) * 0.4;
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ════════════════════════════════════════════
+//  THREE.JS — SCENE 3: CTA TORUS KNOT
+// ════════════════════════════════════════════
+(function initCtaScene() {
+  const canvas = document.getElementById('three-cta');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  let W = canvas.offsetWidth, H = canvas.offsetHeight;
+  renderer.setSize(W, H);
+  const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
+  camera.position.set(0, 0, 9);
+
+  // Solid torus knot
+  const kGeo = new THREE.TorusKnotGeometry(2.4, 0.6, 250, 50, 2, 3);
+  const kMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, metalness: 0.9, roughness: 0.1 });
+  const knot = new THREE.Mesh(kGeo, kMat);
+  scene.add(knot);
+
+  // Wireframe overlay
+  const kWire = new THREE.Mesh(kGeo, new THREE.MeshBasicMaterial({ wireframe: true, color: 0xD4AF37, transparent: true, opacity: 0.1 }));
+  scene.add(kWire);
+
+  // Particle halo
+  const haloGeo = new THREE.BufferGeometry();
+  const hCount = 300;
+  const hPos = new Float32Array(hCount * 3);
+  for (let i = 0; i < hCount; i++) {
+    const phi = Math.random() * Math.PI * 2;
+    const theta = Math.random() * Math.PI;
+    const r = 4.5 + Math.random() * 4;
+    hPos[i * 3] = r * Math.sin(theta) * Math.cos(phi);
+    hPos[i * 3 + 1] = r * Math.sin(theta) * Math.sin(phi);
+    hPos[i * 3 + 2] = r * Math.cos(theta);
+  }
+  haloGeo.setAttribute('position', new THREE.BufferAttribute(hPos, 3));
+  scene.add(new THREE.Points(haloGeo, new THREE.PointsMaterial({ color: 0xD4AF37, size: 0.025, transparent: true, opacity: 0.5 })));
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0x111115, 2));
+  const gl1 = new THREE.PointLight(0xD4AF37, 6, 20);
+  gl1.position.set(4, 4, 3);
+  scene.add(gl1);
+  const gl2 = new THREE.PointLight(0x7A5CFF, 4, 20);
+  gl2.position.set(-4, -3, 4);
+  scene.add(gl2);
+
+  let mxN = 0, myN = 0;
+  document.addEventListener('mousemove', e => {
+    mxN = (e.clientX / window.innerWidth - 0.5);
+    myN = (e.clientY / window.innerHeight - 0.5);
+  });
+
+  window.addEventListener('resize', () => {
+    W = canvas.offsetWidth; H = canvas.offsetHeight;
+    renderer.setSize(W, H);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.005;
+    knot.rotation.x += 0.003;
+    knot.rotation.y += 0.005;
+    knot.rotation.z += 0.001;
+    kWire.rotation.x = knot.rotation.x + 0.005;
+    kWire.rotation.y = knot.rotation.y - 0.003;
+    kWire.rotation.z = knot.rotation.z;
+
+    // Orbit lights
+    gl1.position.x = Math.sin(t * 0.6) * 6;
+    gl1.position.y = Math.cos(t * 0.4) * 4;
+    gl2.position.x = Math.cos(t * 0.5) * 6;
+    gl2.position.z = Math.sin(t * 0.3) * 5;
+
+    // Mouse tilt camera
+    camera.position.x += (mxN * 2 - camera.position.x) * 0.03;
+    camera.position.y += (-myN * 1.5 - camera.position.y) * 0.03;
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ════════════════════════════════════════════
+//  EXPERIENCE CANVASES (2D)
+// ════════════════════════════════════════════
+document.querySelectorAll('.exp-canvas').forEach(canvas => {
+  const ctx = canvas.getContext('2d');
+  const c1 = canvas.dataset.c1, c2 = canvas.dataset.c2, bg = canvas.dataset.c3 || '#0a0a12';
+  let W, H, t = Math.random() * 100;
+  const pts = Array.from({ length: 60 }, () => ({
+    x: Math.random(), y: Math.random(),
+    vx: (Math.random() - .5) * .001, vy: (Math.random() - .5) * .001
+  }));
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
+  resize(); new ResizeObserver(resize).observe(canvas);
+  function draw() {
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > 1) p.vx *= -1;
+      if (p.y < 0 || p.y > 1) p.vy *= -1;
+      const r = 2 + 2 * (0.5 + 0.5 * Math.sin(t * .03 + p.x * 6));
+      ctx.beginPath(); ctx.arc(p.x * W, p.y * H, r, 0, Math.PI * 2);
+      ctx.fillStyle = Math.sin(t * .02) > 0 ? c1 + '44' : c2 + '44'; ctx.fill();
+    });
+    // Connect nearby
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = (pts[i].x - pts[j].x) * W, dy = (pts[i].y - pts[j].y) * H;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 90) {
+          ctx.beginPath();
+          ctx.strokeStyle = c1 + Math.floor((1 - d / 90) * 30).toString(16).padStart(2, '0');
+          ctx.lineWidth = 0.5;
+          ctx.moveTo(pts[i].x * W, pts[i].y * H);
+          ctx.lineTo(pts[j].x * W, pts[j].y * H);
+          ctx.stroke();
+        }
+      }
+    }
+    t++; requestAnimationFrame(draw);
+  }
+  draw();
+});
+
+// ════════════════════════════════════════════
+//  GALLERY CANVASES
+// ════════════════════════════════════════════
+document.querySelectorAll('.gc').forEach((canvas, idx) => {
+  const ctx = canvas.getContext('2d');
+  const c1 = canvas.dataset.c1, c2 = canvas.dataset.c2;
+  const bgs = ['#0d0a1e','#120e0a','#0a1a0e','#0a0a1a','#1a0a0a','#0e1a0a','#0a0e1a','#1a0e1a'];
+  const bg = bgs[idx % bgs.length];
+  let W, H, t = idx * 20;
+  const bars = Array.from({ length: 12 }, (_, i) => ({ h: Math.random(), phase: i * 0.5 + Math.random() }));
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width = rect.width; H = canvas.height = rect.height;
+  }
+  resize();
+  new ResizeObserver(resize).observe(canvas.parentElement);
+  function draw() {
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    bars.forEach((b, i) => {
+      b.h = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 0.025 + b.phase));
+      const bw = W / bars.length;
+      const bh = b.h * H * 0.6;
+      const g = ctx.createLinearGradient(0, H - bh, 0, H);
+      g.addColorStop(0, c1 + '88'); g.addColorStop(0.5, c2 + '44'); g.addColorStop(1, c1 + '00');
+      ctx.fillStyle = g;
+      ctx.fillRect(i * bw + 2, H - bh, bw - 4, bh);
+    });
+    // Scan line
+    const scanY = (H * (0.5 + 0.5 * Math.sin(t * 0.015)));
+    const grad = ctx.createLinearGradient(0, scanY - 40, 0, scanY + 40);
+    grad.addColorStop(0, 'transparent');
+    grad.addColorStop(0.5, c1 + '15');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, scanY - 40, W, 80);
+    t++; requestAnimationFrame(draw);
+  }
+  draw();
+});
+
+// ════════════════════════════════════════════
+//  HORIZONTAL STORY SCROLL
+// ════════════════════════════════════════════
+const storySection = document.getElementById('story');
+const storyTrack = document.getElementById('story-track');
+const storyDots = document.querySelectorAll('.sp-dot');
+function updateStory() {
+  const rect = storySection.getBoundingClientRect();
+  const totalScroll = storySection.offsetHeight - window.innerHeight;
+  const progress = Math.max(0, Math.min(1, -rect.top / totalScroll));
+  const maxX = storyTrack.scrollWidth - window.innerWidth;
+  storyTrack.style.transform = `translateX(${-maxX * progress}px)`;
+  const activeIndex = Math.round(progress * 4);
+  storyDots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
+}
+window.addEventListener('scroll', updateStory);
+updateStory();
+
+// ════════════════════════════════════════════
+//  TIMELINE SCROLL
+// ════════════════════════════════════════════
+const tlProg = document.getElementById('tl-prog');
+const tlSteps = document.querySelectorAll('.tl-step');
+function updateTimeline() {
+  const tlSection = document.getElementById('timeline');
+  if (!tlSection) return;
+  const rect = tlSection.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, (-rect.top) / (rect.height - window.innerHeight)));
+  tlProg.style.height = (p * 100) + '%';
+  tlSteps.forEach((step, i) => {
+    const stepRect = step.getBoundingClientRect();
+    const isLit = stepRect.top < window.innerHeight * 0.7;
+    step.classList.toggle('lit', isLit);
+  });
+}
+window.addEventListener('scroll', updateTimeline);
+
+// ════════════════════════════════════════════
+//  INTERSECTION OBSERVER (reveals)
+// ════════════════════════════════════════════
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.rl,.fade-up,.sv-item').forEach(el => {
+  if (!el.closest('#hero') && !el.closest('#cta')) obs.observe(el);
+});
+// CTA hero lines reveal when section enters view
+const ctaObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    document.querySelectorAll('#cta .ri').forEach(ri => ri.style.transform = 'translateY(0) rotate(0deg)');
+  }
+}, { threshold: 0.3 });
+const ctaSection = document.getElementById('cta');
+if (ctaSection) ctaObs.observe(ctaSection);
+
+// ════════════════════════════════════════════
+//  COUNTERS
+// ════════════════════════════════════════════
+let counted = false;
+const statsObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !counted) {
+    counted = true;
+    document.querySelectorAll('.stat-n[data-target]').forEach(el => {
+      const target = +el.dataset.target, isLarge = target >= 1000;
+      let val = 0;
+      const step = target / 60;
+      const timer = setInterval(() => {
+        val += step;
+        if (val >= target) { val = target; clearInterval(timer); }
+        el.textContent = isLarge ? Math.round(val).toLocaleString() + '+' : Math.round(val) + '+';
+      }, 25);
+    });
+  }
+}, { threshold: 0.4 });
+const whySec = document.getElementById('why');
+if (whySec) statsObs.observe(whySec);
+
+// ════════════════════════════════════════════
+//  MAGNETIC BUTTONS
+// ════════════════════════════════════════════
+document.querySelectorAll('.mag').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    el.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+    el.style.transition = 'transform 0.1s linear';
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'translate(0,0)';
+    el.style.transition = 'transform 0.8s cubic-bezier(.16,1,.3,1)';
+  });
+});
+</script>
+</body>
+</html>
